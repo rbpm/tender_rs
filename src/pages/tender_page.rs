@@ -2,6 +2,8 @@ use crate::dto::{ArgDto, DataDto};
 use select::document::Document;
 use select::predicate::{Attr, Class, Name};
 use std::io::Cursor;
+use std::time::Duration;
+use reqwest::blocking::Client;
 use crate::traits::{is_in_vec, Data};
 
 pub fn get_tender_pages(args: &ArgDto, old_all: Vec<Box<dyn Data>>) -> Vec<Box<dyn Data>> {
@@ -16,11 +18,15 @@ pub fn get_tender_pages(args: &ArgDto, old_all: Vec<Box<dyn Data>>) -> Vec<Box<d
     }
     return data_vec;
 }
-
 pub fn get_tender_page(mut data_vec: Vec<Box<dyn Data>>, tender_page: u32, old_all: &Vec<Box<dyn Data>>) -> (Vec<Box<dyn Data>>, bool) {
     let tender_prefix = "https://oneplace.marketplanet.pl/zapytania-ofertowe-przetargi/-/rfp/cat?_7_WAR_organizationnoticeportlet_cur=";
     let tender_url = format!("{}{}", tender_prefix, tender_page);
-    let tender_response = reqwest::blocking::get(tender_url).unwrap();
+    let client = Client::builder()
+        .timeout(Duration::from_secs(60 * 30))
+        .build()
+        .unwrap();
+    let tender_response = client.get(tender_url).send().unwrap();
+    //let tender_response = reqwest::blocking::get(tender_url).unwrap();
     let html = tender_response.text().unwrap();
     let cursor = Cursor::new(html);
     let document = Document::from_read(cursor).unwrap();
@@ -57,7 +63,6 @@ pub fn get_tender_page(mut data_vec: Vec<Box<dyn Data>>, tender_page: u32, old_a
     }
     return (data_vec, false);
 }
-
 fn get_href_id(value: &str) -> &str {
     if value.len() < 10 {
         return &"len err";
@@ -68,4 +73,3 @@ fn get_href_id(value: &str) -> &str {
     }
     return &"index err";
 }
-
