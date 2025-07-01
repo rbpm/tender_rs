@@ -1,12 +1,12 @@
-use crate::dto::DataDto;
+use crate::dto::{ArgDto, DataDto};
 use select::document::Document;
 use select::predicate::{Attr, Class, Name};
 use std::io::Cursor;
 use crate::traits::{is_in_vec, Data};
 
-pub fn get_tender_pages(old_all: Vec<Box<dyn Data>>) -> Vec<Box<dyn Data>> {
+pub fn get_tender_pages(args: &ArgDto, old_all: Vec<Box<dyn Data>>) -> Vec<Box<dyn Data>> {
     let mut data_vec = Vec::<Box<dyn Data>>::new();
-    for tender_page in 1..3 {
+    for tender_page in 1..args.tender_pages + 1 {
         println!("tender page: {}", tender_page);
         let (data_vec_1, done) = get_tender_page(data_vec, tender_page, &old_all);
         if done {
@@ -17,7 +17,7 @@ pub fn get_tender_pages(old_all: Vec<Box<dyn Data>>) -> Vec<Box<dyn Data>> {
     return data_vec;
 }
 
-pub fn get_tender_page(mut data_vec: Vec<Box<dyn Data>>, tender_page: i32, old_all: &Vec<Box<dyn Data>>) -> (Vec<Box<dyn Data>>, bool) {
+pub fn get_tender_page(mut data_vec: Vec<Box<dyn Data>>, tender_page: u32, old_all: &Vec<Box<dyn Data>>) -> (Vec<Box<dyn Data>>, bool) {
     let tender_prefix = "https://oneplace.marketplanet.pl/zapytania-ofertowe-przetargi/-/rfp/cat?_7_WAR_organizationnoticeportlet_cur=";
     let tender_url = format!("{}{}", tender_prefix, tender_page);
     let tender_response = reqwest::blocking::get(tender_url).unwrap();

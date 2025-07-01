@@ -15,17 +15,20 @@ pub const IT_ORDERS_FILENAME: &'static str = "oferty_it.xlsx";
 pub struct ArgDto {
     /// Save all tenders to excel
     #[arg(long, default_value_t = true)]
-    save_all: bool,
+    pub save_all: bool,
     /// Number of tender Pages to get (max 1000)
-    #[arg(long, default_value_t = 3)]
-    tender_pages: u8,
+    #[arg(long, default_value_t = 1000)]
+    pub tender_pages: u32,
+    /// Number of order Pages to get (max 1000/50=200)
+    #[arg(long, default_value_t = 200)]
+    pub order_pages: u32,
     /// Append old tenders to new all
     #[arg(short, long, default_value_t = false)]
-    append_all: bool,
+    pub append_all: bool,
     /// Tender old file name
     #[arg(long, default_value = TENDERS_FILENAME)]
-    tender_old_filename: String,
+    pub tender_old_filename: String,
     /// Order old file name
     #[arg(long, default_value = ORDERS_FILENAME)]
-    orders_old_filename: String,
+    pub orders_old_filename: String,
 }

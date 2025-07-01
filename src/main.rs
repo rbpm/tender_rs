@@ -18,10 +18,10 @@ fn main() {
     println!("Order old data len: {:?}", order_old_all_data.len());
     
     
-    let order_data = pages::get_order_pages(order_old_all_data);
+    let order_data = pages::get_order_pages(&args, order_old_all_data);
     println!("order_data.len: {:?}", order_data.len());
 
-    let tender_data = pages::get_tender_pages(tender_old_all_data);
+    let tender_data = pages::get_tender_pages(&args, tender_old_all_data);
     println!("tender_data.len: {:?}", tender_data.len());
 
     let mut tender_book = new_file_empty_worksheet();
