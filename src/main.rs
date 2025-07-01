@@ -41,19 +41,3 @@ fn main() {
         TENDERS_FILENAME,
     );
 }
-
-fn process_data(
-    args: &ArgDto,
-    order_data: &Vec<Box<dyn Data>>,
-    it_sheet_name: &str,
-    sheet_name: &str,
-    it_file_name: &str,
-    file_name: &str,
-) {
-    let mut data_book = new_file_empty_worksheet();
-    let mut all_data_book = new_file_empty_worksheet();
-    data_book = process(data_book, &order_data, it_sheet_name, &args, false);
-    all_data_book = process(all_data_book, &order_data, sheet_name, &args, true);
-    let _ = writer::xlsx::write(&data_book, std::path::Path::new(it_file_name));
-    let _ = writer::xlsx::write(&all_data_book, std::path::Path::new(file_name));
-}

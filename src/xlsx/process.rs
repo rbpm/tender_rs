@@ -1,6 +1,8 @@
 use crate::dto::{new_tender_dto, ArgDto};
 use crate::traits::Data;
-use umya_spreadsheet::{reader, Cell, Color, Hyperlink, Spreadsheet, Worksheet};
+use umya_spreadsheet::{
+    new_file_empty_worksheet, reader, writer, Cell, Color, Hyperlink, Spreadsheet, Worksheet,
+};
 
 pub fn get_old_all_data(file_name: &str, sheet_name: &str) -> Vec<Box<dyn Data>> {
     let path = std::path::Path::new(file_name);
@@ -27,7 +29,22 @@ pub fn get_old_all_data(file_name: &str, sheet_name: &str) -> Vec<Box<dyn Data>>
     }
     order_vec
 }
-pub fn process(
+pub fn process_data(
+    args: &ArgDto,
+    order_data: &Vec<Box<dyn Data>>,
+    it_sheet_name: &str,
+    sheet_name: &str,
+    it_file_name: &str,
+    file_name: &str,
+) {
+    let mut data_book = new_file_empty_worksheet();
+    let mut all_data_book = new_file_empty_worksheet();
+    data_book = process(data_book, &order_data, it_sheet_name, &args, false);
+    all_data_book = process(all_data_book, &order_data, sheet_name, &args, true);
+    let _ = writer::xlsx::write(&data_book, std::path::Path::new(it_file_name));
+    let _ = writer::xlsx::write(&all_data_book, std::path::Path::new(file_name));
+}
+fn process(
     mut book: Spreadsheet,
     data_vec: &Vec<Box<dyn Data>>,
     sheet_name: &str,
