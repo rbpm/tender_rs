@@ -19,7 +19,7 @@ pub struct ArgDto {
     /// Number of tender Pages to get (max 1000)
     #[arg(long, default_value_t = 1000)]
     pub tender_pages: u32,
-    /// Number of order Pages to get (max 1000/50=200)
+    /// Number of order Pages to get (max 10000/50=200)
     #[arg(long, default_value_t = 200)]
     pub order_pages: u32,
     /// Append old tenders to new all
