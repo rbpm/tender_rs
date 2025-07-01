@@ -22,7 +22,8 @@ pub fn get_tender_page(mut data_vec: Vec<Box<dyn Data>>, tender_page: u32, old_a
     let tender_prefix = "https://oneplace.marketplanet.pl/zapytania-ofertowe-przetargi/-/rfp/cat?_7_WAR_organizationnoticeportlet_cur=";
     let tender_url = format!("{}{}", tender_prefix, tender_page);
     let client = Client::builder()
-        .timeout(Duration::from_secs(60 * 30))
+        .timeout(Duration::from_secs(60 * 30)) // Total request timeout
+        .connect_timeout(Duration::from_secs(60 * 5)) // Connection establishment timeout
         .build()
         .unwrap();
     let tender_response = client.get(tender_url).send().unwrap();
