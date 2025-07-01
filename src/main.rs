@@ -1,8 +1,6 @@
 use crate::dto::*;
-use crate::traits::Data;
 use crate::xlsx::*;
 use clap::Parser;
-use umya_spreadsheet::*;
 
 mod dto;
 mod pages;
