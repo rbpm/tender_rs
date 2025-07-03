@@ -2,6 +2,7 @@ use crate::dto::{ArgDto, DataDto};
 use select::document::Document;
 use select::predicate::{Attr, Class, Name};
 use std::io::Cursor;
+use std::thread::sleep;
 use std::time::Duration;
 use reqwest::blocking::Client;
 use crate::traits::{is_in_vec, Data};
@@ -9,6 +10,7 @@ use crate::traits::{is_in_vec, Data};
 pub fn get_tender_pages(args: &ArgDto, old_all: Vec<Box<dyn Data>>) -> Vec<Box<dyn Data>> {
     let mut data_vec = Vec::<Box<dyn Data>>::new();
     for tender_page in 1..args.tender_pages + 1 {
+        sleep(Duration::from_secs(1));
         println!("tender page: {}", tender_page);
         let (data_vec_1, done) = get_tender_page(data_vec, tender_page, &old_all);
         if done {
