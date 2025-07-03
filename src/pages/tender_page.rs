@@ -1,16 +1,13 @@
 use crate::dto::{ArgDto, DataDto};
 use crate::traits::{is_in_vec, Data};
-use reqwest::blocking::Client;
 use select::document::Document;
 use select::predicate::{Attr, Class, Name};
 use std::io::Cursor;
-use std::thread::sleep;
-use std::time::Duration;
 
 pub fn get_tender_pages(args: &ArgDto, old_all: Vec<Box<dyn Data>>) -> Vec<Box<dyn Data>> {
     let mut data_vec = Vec::<Box<dyn Data>>::new();
     for tender_page in 1..args.tender_pages + 1 {
-        sleep(Duration::from_secs(1));
+        //sleep(Duration::from_secs(1));
         println!("tender page: {}", tender_page);
         let (data_vec_1, done) = get_tender_page(data_vec, tender_page, &old_all);
         if done {
@@ -18,18 +15,18 @@ pub fn get_tender_pages(args: &ArgDto, old_all: Vec<Box<dyn Data>>) -> Vec<Box<d
         }
         data_vec = data_vec_1;
     }
-    return data_vec;
+    data_vec
 }
 pub fn get_tender_page(mut data_vec: Vec<Box<dyn Data>>, tender_page: u32, old_all: &Vec<Box<dyn Data>>) -> (Vec<Box<dyn Data>>, bool) {
     let tender_prefix = "https://oneplace.marketplanet.pl/zapytania-ofertowe-przetargi/-/rfp/cat?_7_WAR_organizationnoticeportlet_cur=";
     let tender_url = format!("{}{}", tender_prefix, tender_page);
-    let client = Client::builder()
-        .timeout(Duration::from_secs(60 * 30)) // Total request timeout
-        .connect_timeout(Duration::from_secs(60 * 5)) // Connection establishment timeout
-        .build()
-        .unwrap();
-    let tender_response = client.get(tender_url).send().unwrap();
-    //let tender_response = reqwest::blocking::get(tender_url).unwrap();
+    // let client = Client::builder()
+    //     .timeout(Duration::from_secs(60 * 30)) // Total request timeout
+    //     .connect_timeout(Duration::from_secs(60 * 5)) // Connection establishment timeout
+    //     .build()
+    //     .unwrap();
+    // let tender_response = client.get(tender_url).send().unwrap();
+    let tender_response = reqwest::blocking::get(tender_url).unwrap();
     if let Ok(html) = tender_response.text(){
         let cursor = Cursor::new(html);
         let document = Document::from_read(cursor).unwrap();
@@ -67,7 +64,7 @@ pub fn get_tender_page(mut data_vec: Vec<Box<dyn Data>>, tender_page: u32, old_a
         println!("tender page could not be read");
         return (data_vec, true);
     }
-    return (data_vec, false);
+    (data_vec, false)
 }
 fn get_href_id(value: &str) -> &str {
     if value.len() < 10 {
@@ -77,5 +74,5 @@ fn get_href_id(value: &str) -> &str {
         let id = &value[pos + 10..];
         return id;
     }
-    return &"index err";
+    &"index err"
 }
