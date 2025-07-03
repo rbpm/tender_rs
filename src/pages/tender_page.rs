@@ -17,7 +17,11 @@ pub fn get_tender_pages(args: &ArgDto, old_all: Vec<Box<dyn Data>>) -> Vec<Box<d
     }
     data_vec
 }
-pub fn get_tender_page(mut data_vec: Vec<Box<dyn Data>>, tender_page: u32, old_all: &Vec<Box<dyn Data>>) -> (Vec<Box<dyn Data>>, bool) {
+pub fn get_tender_page(
+    mut data_vec: Vec<Box<dyn Data>>,
+    tender_page: u32,
+    old_all: &Vec<Box<dyn Data>>,
+) -> (Vec<Box<dyn Data>>, bool) {
     let tender_prefix = "https://oneplace.marketplanet.pl/zapytania-ofertowe-przetargi/-/rfp/cat?_7_WAR_organizationnoticeportlet_cur=";
     let tender_url = format!("{}{}", tender_prefix, tender_page);
     // let client = Client::builder()
@@ -26,42 +30,48 @@ pub fn get_tender_page(mut data_vec: Vec<Box<dyn Data>>, tender_page: u32, old_a
     //     .build()
     //     .unwrap();
     // let tender_response = client.get(tender_url).send().unwrap();
-    let tender_response = reqwest::blocking::get(tender_url).unwrap();
-    if let Ok(html) = tender_response.text(){
-        let cursor = Cursor::new(html);
-        let document = Document::from_read(cursor).unwrap();
-        for node in document.find(Attr(
-            "id",
-            "_7_WAR_organizationnoticeportlet_selectNoticesSearchContainer",
-        )) {
-            for sub_node in node.find(Class("lfr-search-container-list")) {
-                for group in sub_node.find(Name("dl")) {
-                    for element in group.find(Attr("data-qa-id", "row")) {
-                        for a_tag in element.find(Name("a")) {
-                            let href_value = a_tag.attr("href").unwrap();
-                            let name_value = a_tag.text();
-                            for date_span in element.find(Attr("title", "Termin składania ofert")) {
-                                let date_value = date_span.text().trim().to_string();
-                                let data_dto = DataDto {
-                                    name: name_value.to_string(),
-                                    href: href_value.to_string(),
-                                    date: date_value.to_string(),
-                                    id: get_href_id(href_value).to_string(),
-                                };
-                                if is_in_vec(old_all, Box::new(&data_dto)){
+    if let Ok(tender_response) = reqwest::blocking::get(tender_url) {
+        if let Ok(html) = tender_response.text() {
+            let cursor = Cursor::new(html);
+            let document = Document::from_read(cursor).unwrap();
+            for node in document.find(Attr(
+                "id",
+                "_7_WAR_organizationnoticeportlet_selectNoticesSearchContainer",
+            )) {
+                for sub_node in node.find(Class("lfr-search-container-list")) {
+                    for group in sub_node.find(Name("dl")) {
+                        for element in group.find(Attr("data-qa-id", "row")) {
+                            for a_tag in element.find(Name("a")) {
+                                let href_value = a_tag.attr("href").unwrap();
+                                let name_value = a_tag.text();
+                                for date_span in
+                                    element.find(Attr("title", "Termin składania ofert"))
+                                {
+                                    let date_value = date_span.text().trim().to_string();
+                                    let data_dto = DataDto {
+                                        name: name_value.to_string(),
+                                        href: href_value.to_string(),
+                                        date: date_value.to_string(),
+                                        id: get_href_id(href_value).to_string(),
+                                    };
+                                    if is_in_vec(old_all, Box::new(&data_dto)) {
+                                        data_vec.push(Box::new(data_dto));
+                                        return (data_vec, true);
+                                    }
+                                    //data_vec.extend(std::iter::once(Box::new(data_dto)));
                                     data_vec.push(Box::new(data_dto));
-                                    return (data_vec, true);
                                 }
-                                //data_vec.extend(std::iter::once(Box::new(data_dto)));
-                                data_vec.push(Box::new(data_dto));
                             }
                         }
                     }
                 }
             }
+        } else {
+            println!("tender page could not be read");
+            return (data_vec, true);
         }
     } else {
-        println!("tender page could not be read");
+        println!("tender page is not reachable");
         return (data_vec, true);
     }
     (data_vec, false)
