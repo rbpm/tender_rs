@@ -65,6 +65,7 @@ pub fn get_tender_page(mut data_vec: Vec<Box<dyn Data>>, tender_page: u32, old_a
         }
     } else {
         println!("tender page could not be read");
+        return (data_vec, true);
     }
     return (data_vec, false);
 }
