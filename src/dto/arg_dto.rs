@@ -16,8 +16,8 @@ pub struct ArgDto {
     /// Save all tenders to excel
     #[arg(long, default_value_t = true)]
     pub save_all: bool,
-    /// Number of tender Pages to get (max 1000)
-    #[arg(long, default_value_t = 1000)]
+    /// Number of tender Pages to get (max 790)
+    #[arg(long, default_value_t = 790)]
     pub tender_pages: u32,
     /// Number of order Pages to get (max 10000/50=200)
     #[arg(long, default_value_t = 200)]
