@@ -6,8 +6,8 @@ pub const ORDERS_FILENAME: &'static str = "oferty.xlsx";
 pub const ORDERS: &'static str = "oferty";
 pub const IT_TENDERS: &'static str = "przetargi IT";
 pub const IT_ORDERS: &'static str = "oferty IT";
-pub const IT_TENDERS_FILENAME: &'static str = "przetargi_it.xlsx";
-pub const IT_ORDERS_FILENAME: &'static str = "oferty_it.xlsx";
+pub const IT_TENDERS_FILENAME: &'static str = "przetargi_it";
+pub const IT_ORDERS_FILENAME: &'static str = "oferty_it";
 
 /// Simple program to get tenders
 #[derive(Parser, Debug)]

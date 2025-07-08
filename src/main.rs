@@ -1,11 +1,17 @@
 use crate::dto::*;
 use crate::xlsx::*;
+use chrono::offset::Local;
 use clap::Parser;
 
 mod dto;
 mod pages;
 mod traits;
 mod xlsx;
+
+fn file_date_str() -> String {
+    let date_time = Local::now();
+    format!("{}", date_time.format("%Y%m%d"))
+}
 
 fn main() {
     let args = ArgDto::parse();
@@ -23,7 +29,7 @@ fn main() {
         &order_data,
         IT_ORDERS,
         ORDERS,
-        IT_ORDERS_FILENAME,
+        &format!("{}_{}.xlsx", IT_ORDERS_FILENAME, file_date_str()),
         ORDERS_FILENAME,
     );
 
@@ -35,7 +41,7 @@ fn main() {
         &order_data,
         IT_TENDERS,
         TENDERS,
-        IT_TENDERS_FILENAME,
+        &format!("{}_{}.xlsx", IT_TENDERS_FILENAME, file_date_str()),
         TENDERS_FILENAME,
     );
 }
