@@ -24,14 +24,17 @@ pub fn get_tender_page(
 ) -> (Vec<Box<dyn Data>>, bool) {
     let tender_prefix = "https://oneplace.marketplanet.pl/zapytania-ofertowe-przetargi/-/rfp/cat?_7_WAR_organizationnoticeportlet_cur=";
     let tender_url = format!("{}{}", tender_prefix, tender_page);
+    //reqwest::blocking::get is breaking tender server responses
     // let client = Client::builder()
     //     .timeout(Duration::from_secs(60 * 30)) // Total request timeout
     //     .connect_timeout(Duration::from_secs(60 * 5)) // Connection establishment timeout
     //     .build()
     //     .unwrap();
     // let tender_response = client.get(tender_url).send().unwrap();
-    if let Ok(tender_response) = reqwest::blocking::get(tender_url) {
-        if let Ok(html) = tender_response.text() {
+    // if let Ok(tender_response) = reqwest::blocking::get(tender_url) {
+    //     if let Ok(html) = tender_response.text() {
+    if let Ok(mut tender_response) = ureq::get(tender_url).call() {
+        if let Ok(html) = tender_response.body_mut().read_to_string() {
             let cursor = Cursor::new(html);
             let document = Document::from_read(cursor).unwrap();
             for node in document.find(Attr(

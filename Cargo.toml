@@ -12,3 +12,4 @@ serde = { version = "1.0.219", features = ["derive"] }
 select = { version = "0.6.1" }
 clap = { version = "4.5.40", features = ["derive"] }
 chrono = "0.4.41"
+ureq = "3.0.12"
