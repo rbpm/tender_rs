@@ -38,7 +38,7 @@ fn main() {
 
     process_data(
         &args,
-        &order_data,
+        &tender_data,
         IT_TENDERS,
         TENDERS,
         &format!("{}_{}.xlsx", IT_TENDERS_FILENAME, file_date_str()),
